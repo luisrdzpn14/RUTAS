@@ -37,6 +37,37 @@ st.set_page_config(page_title="Analizador de Rutas", page_icon="🗺️", layout
 
 load_dotenv()
 
+
+def get_secret(nombre: str) -> str:
+    """Lee un valor de .env / variables de entorno, o de st.secrets en Streamlit Cloud."""
+    valor = os.getenv(nombre, "")
+    if valor:
+        return valor
+    try:
+        return st.secrets.get(nombre, "")
+    except Exception:
+        return ""
+
+
+# ─────────────────────────────  Login con contraseña  ─────────────────────────────
+# Se activa solo si existe APP_PASSWORD en .env (local) o en Secrets (Streamlit Cloud).
+
+APP_PASSWORD = get_secret("APP_PASSWORD")
+
+if APP_PASSWORD and not st.session_state.get("auth_ok", False):
+    st.title("🗺️ Analizador de Rutas")
+    st.markdown("#### 🔒 Ingresa la contraseña para usar la app")
+    with st.form("login"):
+        pwd = st.text_input("Contraseña", type="password")
+        entrar = st.form_submit_button("Entrar", type="primary", use_container_width=True)
+    if entrar:
+        if pwd == APP_PASSWORD:
+            st.session_state["auth_ok"] = True
+            st.rerun()
+        else:
+            st.error("Contraseña incorrecta.")
+    st.stop()
+
 st.title("🗺️ Analizador de Rutas")
 st.caption(
     "Compara trayectos en auto entre varios orígenes y destinos a una hora dada, "
@@ -48,12 +79,15 @@ st.caption(
 with st.sidebar:
     st.header("⚙️ Configuración")
 
-    api_key = os.getenv("GOOGLE_MAPS_API_KEY", "")
+    api_key = get_secret("GOOGLE_MAPS_API_KEY")
     if api_key:
-        st.success("API key cargada desde .env")
+        st.success("API key configurada")
     else:
         api_key = st.text_input("Google Maps API key", type="password")
-        st.info("Tip: crea un archivo .env con GOOGLE_MAPS_API_KEY=tu_key")
+        st.info(
+            "Tip: crea un archivo .env con GOOGLE_MAPS_API_KEY=tu_key "
+            "(o configúrala en Secrets si usas Streamlit Cloud)."
+        )
 
     modo = st.radio(
         "El horario es la hora de…",
@@ -241,12 +275,18 @@ if resultados:
     st.subheader("🗺️ Mapa de trayectos")
     st.caption(
         "Cada combinación origen→destino tiene un color; la ruta más rápida va en línea "
-        "sólida y las alternativas punteadas. Usa el control de capas (arriba a la "
-        "derecha del mapa) para mostrar u ocultar combinaciones."
+        "sólida y las alternativas punteadas. En el control de capas del mapa puedes "
+        "cambiar entre vista **Mapa** y **Satélite**, y mostrar u ocultar combinaciones."
     )
 
     puntos_todos = []
-    mapa = folium.Map(tiles="cartodbpositron")
+    mapa = folium.Map(tiles=None)
+    folium.TileLayer("cartodbpositron", name="🗺️ Mapa").add_to(mapa)
+    folium.TileLayer(
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attr="Esri — World Imagery",
+        name="🛰️ Satélite",
+    ).add_to(mapa)
 
     for r in resultados:
         if r["polyline"]:

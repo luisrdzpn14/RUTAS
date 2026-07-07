@@ -17,8 +17,10 @@ para llegar a un destino (por ejemplo, al trabajo).
   - 🛣️ Hasta **3 rutas alternativas** por combinación (vía qué avenidas/
     carreteras, tiempo con y sin tráfico, km).
   - 🗺️ **Mapa interactivo** con los trayectos dibujados: la ruta más rápida en
-    línea sólida, las alternativas punteadas, y control de capas para
-    mostrar/ocultar cada combinación.
+    línea sólida, las alternativas punteadas, control de capas para
+    mostrar/ocultar cada combinación y vista **Mapa o Satélite**.
+- 🔒 **Login con contraseña** (opcional): si defines `APP_PASSWORD`, la app
+  pide contraseña antes de usarse — útil al publicarla en internet.
 
 ## Requisitos
 
@@ -43,6 +45,23 @@ streamlit run app.py
 ```
 
 Se abre en el navegador (por defecto <http://localhost:8501>).
+
+## Publicar en internet (Streamlit Community Cloud, gratis)
+
+1. Entra a <https://share.streamlit.io> con tu cuenta de GitHub.
+2. **New app** → repo `luisrdzpn14/RUTAS`, branch `main`, archivo `app.py`.
+3. En **Settings → Secrets** pega (con tus valores reales):
+
+   ```toml
+   GOOGLE_MAPS_API_KEY = "tu_key"
+   APP_PASSWORD = "tu_contraseña"
+   ```
+
+4. Deploy. Te da una URL pública (`https://….streamlit.app`) que puedes
+   compartir; quien entre necesitará la contraseña.
+
+> La key y la contraseña viven en los *Secrets* del servidor, nunca en el
+> repositorio.
 
 ## Estructura
 

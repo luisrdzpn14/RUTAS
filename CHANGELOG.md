@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.1.0 — 2026-07-06
+
+### Nuevo
+- 🔒 **Login con contraseña** (opcional): se activa definiendo `APP_PASSWORD`
+  en `.env` o en los Secrets de Streamlit Cloud.
+- 🛰️ **Vista satelital** en el mapa (Esri World Imagery), conmutable desde el
+  control de capas junto a la vista de mapa.
+- La API key (y la contraseña) ahora también se leen de `st.secrets`, listo
+  para publicar en Streamlit Community Cloud; instrucciones de deploy en el
+  README.
+
 ## v2.0.0 — 2026-07-06
 
 ### Nuevo
