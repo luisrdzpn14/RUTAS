@@ -4,16 +4,24 @@ Compara tiempos de viaje desde múltiples orígenes a tu trabajo
 Uso: python analizar_rutas.py
 """
 
+import os
 import urllib.request
 import urllib.parse
 import json
 from datetime import datetime, timedelta
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # ─────────────────────────────────────────────
 #  CONFIGURACIÓN — edita aquí tus datos
 # ─────────────────────────────────────────────
 
-API_KEY = "AIzaSyBQ_XSw1ssehe1Wh4ps_UyWajE1wvKX7l0"
+# La API key se lee del archivo .env (GOOGLE_MAPS_API_KEY=...), nunca del código
+API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "TU_API_KEY_AQUI")
 
 DESTINO = "LIC. MANUEL GOMEZ MORIN NO. 3960 CENTRO SUR, HIRG PARK CORPORATE, QUERETARO, QRO. "
 
@@ -154,6 +162,6 @@ def menu():
 
 if __name__ == "__main__":
     if API_KEY == "TU_API_KEY_AQUI":
-        print("\n⚠ Edita el archivo y reemplaza TU_API_KEY_AQUI con tu API key real.\n")
+        print("\n⚠ Crea un archivo .env con GOOGLE_MAPS_API_KEY=tu_api_key (ver .env.example).\n")
     else:
         menu()

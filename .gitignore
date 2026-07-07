@@ -1,0 +1,9 @@
+# Secretos — NUNCA subir la API key al repo
+.env
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
